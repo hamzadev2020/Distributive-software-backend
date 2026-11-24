@@ -6,6 +6,7 @@ import { Receipt, FileDown, CheckCircle2, AlertCircle } from 'lucide-react';
 export default function InvoicesPage() {
   const queryClient = useQueryClient();
   const [notification, setNotification] = useState('');
+  const [downloadingId, setDownloadingId] = useState(null);
 
   const { data: invoices, isLoading } = useQuery({
     queryKey: ['invoices-list'],
@@ -33,8 +34,36 @@ export default function InvoicesPage() {
     return `PKR ${(paisa / 100).toLocaleString('en-PK', { minimumFractionDigits: 2 })}`;
   };
 
-  const handleDownloadPdf = (invoiceId) => {
-    window.open(`/api/invoices/${invoiceId}/pdf`, '_blank');
+  const handleDownloadPdf = async (invoiceId, invoiceNumber) => {
+    try {
+      setDownloadingId(invoiceId);
+      const res = await api.get(`/invoices/${invoiceId}/pdf`, {
+        responseType: 'blob'
+      });
+      const blob = new Blob([res.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      
+      // Auto-trigger browser download to PC
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${invoiceNumber || 'Invoice'}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      setTimeout(() => window.URL.revokeObjectURL(url), 60000);
+    } catch (err) {
+      console.error('Failed to download PDF:', err);
+      const token = localStorage.getItem('accessToken');
+      if (token) {
+        const baseUrl = import.meta.env.VITE_API_URL || '/api';
+        window.open(`${baseUrl}/invoices/${invoiceId}/pdf?token=${encodeURIComponent(token)}`, '_blank');
+      } else {
+        alert('Could not download PDF. Please log in again.');
+      }
+    } finally {
+      setDownloadingId(null);
+    }
   };
 
   return (
@@ -125,11 +154,12 @@ export default function InvoicesPage() {
                         </button>
                       )}
                       <button
-                        onClick={() => handleDownloadPdf(inv._id)}
-                        className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium inline-flex items-center space-x-1"
+                        onClick={() => handleDownloadPdf(inv._id, inv.invoiceNumber)}
+                        disabled={downloadingId === inv._id}
+                        className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium inline-flex items-center space-x-1 disabled:opacity-50"
                       >
                         <FileDown className="w-3.5 h-3.5" />
-                        <span>PDF</span>
+                        <span>{downloadingId === inv._id ? 'Opening...' : 'PDF'}</span>
                       </button>
                     </td>
                   </tr>
