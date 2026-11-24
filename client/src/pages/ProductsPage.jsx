@@ -13,11 +13,11 @@ export default function ProductsPage() {
   const [form, setForm] = useState({
     sku: '',
     name: '',
-    baseUnit: 'carton',
-    cartonSize: 12,
+    baseUnit: 'piece',
+    cartonSize: 10,
     salePricePKR: '',
     costPricePKR: '',
-    taxRatePercent: 18,
+    taxRatePercent: 1,
     reorderLevel: 20
   });
 
@@ -41,11 +41,11 @@ export default function ProductsPage() {
       setForm({
         sku: '',
         name: '',
-        baseUnit: 'carton',
-        cartonSize: 12,
+        baseUnit: 'piece',
+        cartonSize: 10,
         salePricePKR: '',
         costPricePKR: '',
-        taxRatePercent: 18,
+        taxRatePercent: 1,
         reorderLevel: 20
       });
     }
