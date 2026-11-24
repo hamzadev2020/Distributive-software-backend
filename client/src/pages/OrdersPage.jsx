@@ -289,6 +289,37 @@ export default function OrdersPage() {
                 />
               </div>
 
+              {/* Price & 1% Tax Preview */}
+              {(() => {
+                const selectedProd = products?.find(p => p._id === form.productId);
+                if (!selectedProd) return null;
+                const tpPaisa = selectedProd.salePricePaisa || 0;
+                const qty = Number(form.quantity) || 0;
+                const subtotal = tpPaisa * qty;
+                const taxPaisa = Math.round(subtotal * 0.01);
+                const grandTotal = subtotal + taxPaisa;
+                return (
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1 text-xs">
+                    <div className="flex justify-between text-slate-600">
+                      <span>Unit Price (TP):</span>
+                      <span className="font-semibold">{formatPKR(tpPaisa)}</span>
+                    </div>
+                    <div className="flex justify-between text-slate-600">
+                      <span>Subtotal:</span>
+                      <span className="font-semibold">{formatPKR(subtotal)}</span>
+                    </div>
+                    <div className="flex justify-between text-indigo-700">
+                      <span>Tax (1% Auto-Calculated):</span>
+                      <span className="font-semibold">{formatPKR(taxPaisa)}</span>
+                    </div>
+                    <div className="flex justify-between text-slate-900 font-bold border-t border-slate-200 pt-1">
+                      <span>Estimated Total:</span>
+                      <span className="text-emerald-700">{formatPKR(grandTotal)}</span>
+                    </div>
+                  </div>
+                );
+              })()}
+
               <div className="flex justify-end space-x-3 pt-4 border-t border-slate-100">
                 <button
                   type="button"

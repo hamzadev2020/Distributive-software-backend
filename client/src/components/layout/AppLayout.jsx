@@ -38,7 +38,7 @@ export default function AppLayout() {
     { name: 'Returns & Damages', path: '/returns', icon: RotateCcw, show: true },
     { name: 'Invoices', path: '/invoices', icon: Receipt, show: !isWarehouseStaff },
     { name: 'Payments', path: '/payments', icon: CreditCard, show: !isWarehouseStaff },
-    { name: 'Vendors & Ledger', path: '/vendors', icon: Users, show: !isWarehouseStaff },
+    { name: 'Customers & Ledger', path: '/vendors', icon: Users, show: !isWarehouseStaff },
     { name: 'Reports & Aging', path: '/reports', icon: BarChart3, show: !isWarehouseStaff }
   ].filter(item => item.show);
 

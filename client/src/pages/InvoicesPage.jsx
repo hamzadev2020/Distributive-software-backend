@@ -110,7 +110,14 @@ export default function InvoicesPage() {
                 invoices?.map(inv => (
                   <tr key={inv._id} className="hover:bg-slate-50/80 transition-colors">
                     <td className="px-6 py-4 font-mono font-bold text-slate-900">{inv.invoiceNumber}</td>
-                    <td className="px-6 py-4 font-medium text-slate-800">{inv.vendorId?.name}</td>
+                    <td className="px-6 py-4">
+                      <span className="font-semibold text-slate-800 block">
+                        {inv.vendorSnapshot?.name || inv.vendorId?.name || 'Customer'}
+                      </span>
+                      <span className="text-xs font-mono text-indigo-600 block">
+                        ID: {inv.vendorSnapshot?.code || inv.vendorId?.code || '—'}
+                      </span>
+                    </td>
                     <td className="px-6 py-4">
                       {inv.documentStatus === 'ISSUED' ? (
                         <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
